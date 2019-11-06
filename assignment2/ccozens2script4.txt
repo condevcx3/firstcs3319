@@ -1,0 +1,39 @@
+-- Connor Cozens -- 250902936 -- ccozens2 --
+-- CS3319 Assignment 2 --
+-- File 4 --
+
+-- Connect Database --
+USE ccozens2assign2db;
+
+-- Delete Doctors LicenseDate < 1965 --
+DELETE from doctor WHERE LicenseDate < "1965-01-01";
+-- Does not work, Doctors can be Head Doctors which acts as a foreign key and affects other tables.
+
+-- Create a view showing patients treated by heads after 31 Dec 1995 --
+CREATE VIEW HeadPatients AS SELECT CONCAT_WS(',', patient.FirstName, patient.LastName) AS "patient", doctor.LastName, hospital.HospitalName FROM patient INNER JOIN (assigned INNER JOIN (doctor INNER JOIN hospital ON HeadDoctor = LicenseNumber) USING (LicenseNumber)) USING (ohip) WHERE hospital.StartDate > "1995-12-31";
+
+-- Show HeadPatients View --
+SELECT * FROM HeadPatients;
+
+-- Output Doctor --
+SELECT * FROM doctor;
+
+-- Output Assigned --
+SELECT * FROM assigned;
+
+-- Delete Clooney --
+DELETE FROM doctor WHERE lastname LIKE "Clooney";
+
+-- Make Sure Associated Table Deletion Worked --
+SELECT * FROM doctor;
+SELECT * FROM assigned;
+-- Delete did not cascade delete all entries with value.
+
+-- Delete All Surgeons --
+DELETE FROM doctor WHERE specialty LIKE "Surgeon";
+
+-- View Doctors --
+SELECT * FROM doctor;
+SELECT * FROM assigned;
+-- Delete did not cascade delete as values are used as foreign keys.
+

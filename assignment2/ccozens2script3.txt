@@ -1,0 +1,46 @@
+-- Connor Cozens -- 250902936 -- ccozens2 --
+-- CS3319 Assignment 2 --
+-- File 3 --
+
+-- Connect Database --
+USE ccozens2assign2db;
+
+-- Query 1: Display All Patients' Last Names --
+SELECT LastName FROM patient;
+
+-- Query 2: Display All Patients' Distinct Last Names --
+SELECT DISTINCT LastName FROM patient;
+
+-- Query 3: Display All Doctor Information Ordered by Last Name --
+SELECT * FROM doctor ORDER BY LastName ASC;
+
+-- Query 4: Display Hospital Name & Number of Beds where Beds > 1500 --
+SELECT HospitalName, NumberBeds FROM hospital WHERE (NumberBeds > 1500);
+
+-- Query 5: Display Last Name & First Name of Doctors at St. Josephs --
+SELECT LastName, FirstName FROM doctor WHERE workfrom = (SELECT HospitalCode FROM hospital WHERE HospitalName = "St. Joseph");
+
+-- Query 6: Display Patients Who Have Last Name Starting With "G" --
+SELECT FirstName, LastName FROM patient WHERE LastName LIKE "G%";
+
+-- QUERY 7: Display Patients Treated by Clooney --
+SELECT patient.FirstName, patient.LastName FROM patient INNER JOIN (assigned INNER JOIN doctor USING (LicenseNumber)) USING (ohip) WHERE doctor.LastName LIKE "Clooney";
+
+-- Query 8: Display Hospital Name, City, Last Name of Head Doctor --
+SELECT HospitalName, HospitalCity, LastName FROM hospital INNER JOIN doctor on HeadDoctor = LicenseNumber;
+
+-- Query 9: Display um of Beds for All Hospitals with a Title
+SELECT SUM(NumberBeds) AS "Total Number of Beds" FROM hospital;
+
+-- Query 10: Display First Name of Patients and First Name of Head Doctor --
+SELECT patient.FirstName, doctor.FirstName FROM patient INNER JOIN (assigned INNER JOIN (hospital INNER JOIN doctor on HeadDoctor = LicenseNumber) USING (LicenseNumber)) USING (ohip);
+
+-- Query 11: Display Surgeons who work in a Victoria --
+SELECT FirstName, LastName FROM doctor INNER JOIN hospital ON workfrom = HospitalCode WHERE HospitalCode LIKE "Victoria" AND Specialty LIKE "Surgeon";
+
+-- Query 12: Find First Names of Doctors who Treat No One --
+SELECT FirstName FROM doctor where LicenseNumber NOT IN (SELECT LicenseNumber FROM assigned);
+
+-- Query 13: Find All Doctors Treating >1 Patient --
+SELECT FirstName, LastName FROM doctor WHERE LicenseNumber IN (SELECT LicenseNumber FROM assigned GROUP BY LicenseNumber HAVING count(ohip) > 1);
+

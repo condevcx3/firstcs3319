@@ -1,0 +1,141 @@
+Warning: Using a password on the command line interface can be insecure.
+--------------
+SHOW databases
+--------------
+
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| ccozens2assign2db  |
+| mysql              |
+| performance_schema |
+| vetoffice          |
++--------------------+
+5 rows in set (0.00 sec)
+
+--------------
+DROP DATABASE IF EXISTS ccozens2assign2db
+--------------
+
+Query OK, 5 rows affected (0.11 sec)
+
+--------------
+CREATE DATABASE ccozens2assign2db
+--------------
+
+Query OK, 1 row affected (0.00 sec)
+
+--------------
+GRANT USAGE ON *.* TO 'ta'@'localhost'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+DROP USER 'ta'@'localhost'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE USER 'ta'@'localhost' IDENTIFIED BY 'cs3319'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+GRANT ALL PRIVILEGES ON ccozens2assign2db.* TO 'ta'@'localhost'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+FLUSH PRIVILEGES
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+SHOW TABLES
+--------------
+
+Empty set (0.00 sec)
+
+--------------
+CREATE TABLE doctor (LicenseNumber VARCHAR(4) NOT NULL, FirstName VARCHAR(20), LastName VARCHAR(20), Specialty VARCHAR(30), LicenseDate DATE, PRIMARY KEY (LicenseNumber))
+--------------
+
+Query OK, 0 rows affected (0.38 sec)
+
+--------------
+CREATE TABLE hospital (HospitalCode VARCHAR(3) NOT NULL, HospitalName VARCHAR(20), HospitalCity VARCHAR(20), HospitalProvince VARCHAR(2), HeadDoctor VARCHAR(4), StartDate DATE, NumberBeds SMALLINT, FOREIGN KEY (HeadDoctor) REFERENCES doctor (LicenseNumber), PRIMARY KEY (HospitalCode))
+--------------
+
+Query OK, 0 rows affected (0.07 sec)
+
+--------------
+DESCRIBE doctor
+--------------
+
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| LicenseNumber | varchar(4)  | NO   | PRI | NULL    |       |
+| FirstName     | varchar(20) | YES  |     | NULL    |       |
+| LastName      | varchar(20) | YES  |     | NULL    |       |
+| Specialty     | varchar(30) | YES  |     | NULL    |       |
+| LicenseDate   | date        | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+--------------
+ALTER TABLE doctor ADD workfrom VARCHAR(4), ADD CONSTRAINT FOREIGN KEY (workfrom) REFERENCES hospital(HospitalCode) ON DELETE RESTRICT
+--------------
+
+Query OK, 0 rows affected (0.13 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+--------------
+DESCRIBE doctor
+--------------
+
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| LicenseNumber | varchar(4)  | NO   | PRI | NULL    |       |
+| FirstName     | varchar(20) | YES  |     | NULL    |       |
+| LastName      | varchar(20) | YES  |     | NULL    |       |
+| Specialty     | varchar(30) | YES  |     | NULL    |       |
+| LicenseDate   | date        | YES  |     | NULL    |       |
+| workfrom      | varchar(4)  | YES  | MUL | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+--------------
+CREATE TABLE patient (ohip VARCHAR(9) NOT NULL, FirstName VARCHAR(20), LastName VARCHAR(20), PRIMARY KEY (ohip))
+--------------
+
+Query OK, 0 rows affected (0.05 sec)
+
+--------------
+CREATE TABLE assigned (LicenseNumber VARCHAR(4), ohip VARCHAR(9), FOREIGN KEY (ohip) REFERENCES patient(ohip), FOREIGN KEY (LicenseNumber) REFERENCES doctor(LicenseNumber) ON DELETE CASCADE, PRIMARY KEY (ohip, LicenseNumber))
+--------------
+
+Query OK, 0 rows affected (0.08 sec)
+
+--------------
+SHOW TABLES
+--------------
+
++-----------------------------+
+| Tables_in_ccozens2assign2db |
++-----------------------------+
+| assigned                    |
+| doctor                      |
+| hospital                    |
+| patient                     |
++-----------------------------+
+4 rows in set (0.00 sec)
+
+Bye
